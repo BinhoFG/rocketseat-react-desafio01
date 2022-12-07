@@ -1,0 +1,39 @@
+.task {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--gray-500);
+  border-radius: 0.5rem;
+}
+
+.task + .task {
+  margin-top: 0.75rem;
+}
+
+.task img {
+  height: 1.5rem;
+  width: 1.5rem;
+  margin: 1rem 0 1rem 1rem;
+  cursor: pointer;
+}
+
+.task .isCompleted {
+  text-decoration: line-through;
+  color: var(--gray-300);
+}
+
+.task p {
+  font-size: 0.875rem;
+  color: var(--gray-100);
+  width: 39.5rem;
+  padding: 1rem 0;
+}
+
+.task button {
+  background: transparent;
+  color: var(--gray-300);
+  border: 0;
+  padding: 1rem 1rem 1rem 0;
+  cursor: pointer;
+}

@@ -1,32 +1,104 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { Header } from './components/Header';
+import { SearchBar } from './components/SearchBar';
+import { Task } from './components/Task';
+
+import { useState } from 'react';
+
+import { v4 as uuidv4 } from 'uuid';
+
+import { ClipboardText } from 'phosphor-react';
+
+import styles from './App.module.css';
+
+interface TaskInterface {
+  id: string;
+  isCompleted: boolean;
+  content: string;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState<TaskInterface[]>([]);
+
+  function createNewTask(newTaskText: string) {
+    const newTask = {
+      id: uuidv4(),
+      isCompleted: false,
+      content: newTaskText,
+    };
+
+    setTasks([...tasks, newTask]);
+  }
+
+  function toggleCompletedTask(taskId: string) {
+    const tasksWithUpdatedOne = tasks.map(task => {
+      if (task.id === taskId) {
+        task.isCompleted ? task.isCompleted = false : task.isCompleted = true;
+      }
+      return task;
+    })
+
+    setTasks([...tasksWithUpdatedOne]);
+  }
+
+  function deleteTask(taskId: string) {
+    console.log(taskId);
+    const filtredTaskWithoutDeletedOne = tasks.filter(task => {
+      if (task.id !== taskId) {
+        return task;
+      }
+    })
+
+    setTasks([...filtredTaskWithoutDeletedOne]);
+  }
+
+  const createdTasks = tasks.length;
+  const completedTasks = tasks.filter(task => task.isCompleted).length;
+  const taskProgress = `${completedTasks} de ${createdTasks}`;
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <Header />
+      <div className={styles.mainContainer}>
+        <SearchBar createNewTask={createNewTask} />
+
+        <div className={styles.tasksContainer}>
+          <header>
+            <div className={styles.createdTasks}>
+              <p>Tarefas criadas</p>
+              <span>
+                {createdTasks}
+              </span>
+            </div>
+            <div className={styles.completedTasks}>
+              <p>Concluídas</p>
+              <span>
+                {taskProgress}
+              </span>
+            </div>
+          </header>
+
+          {
+            tasks.map(task => {
+              return (
+                <Task
+                  key={task.id}
+                  id={task.id}
+                  isCompleted={task.isCompleted}
+                  content={task.content}
+                  onToggleCompletedTask={toggleCompletedTask}
+                  onDeleteTask={deleteTask}
+                />
+              )
+            })
+          }
+          
+          <div className={`${styles.noTasks} ${tasks.length !== 0 ? styles.hideElement : ''}`}>
+            <ClipboardText size={56} />
+            <p>Você ainda não tem tarefas cadastradas</p>
+            <p>Crie tarefas e organize seus itens a fazer</p>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
